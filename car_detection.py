@@ -217,7 +217,8 @@ def YOLO():
     frame_width, frame_height = 1920, 1080    
     #roi_box = create_roi_box(x=680, y=520, width=560, height=310)
     roi_box = create_roi_box(x=680, y=570, width=640, height=400)    
-    cap = cv2.VideoCapture('rtsp://admin:iapp2019@192.168.1.64/1')
+    #cap = cv2.VideoCapture('rtsp://admin:iapp2019@192.168.1.64/1')
+    cap = cv2.VideoCapture('C:/Users/iApp/Web/RecordFiles/2019-07-24/output.mp4')
     #cap = cv2.VideoCapture("data/cars.mp4")
     cap.set(3, frame_width)
     cap.set(4, frame_height)
@@ -253,7 +254,7 @@ def YOLO():
 
         # Filter out some detections
         roi_box_area = bbox_area(roi_box['xmin'], roi_box['ymin'], roi_box['xmax'], roi_box['ymax'])
-        #detections = filterDetections(detections, min_area = (.3) * roi_box_area)
+        detections = filterDetections(detections, min_area = (.3) * roi_box_area)
 
         # Assign IDs to each detections
         tracks = assign_ids(detections, tracker)
