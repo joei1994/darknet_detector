@@ -15,15 +15,29 @@ from cardetection import darknet
 from cardetection.utils import detection_mapper, constants
 
 class Detector:
+    def fix_names_path(self, metaPath, package_root_dir):
+        try:
+            with open(metaPath, 'r') as metaFH:
+                lines = metaFH.read().split('\n')
+                names_line_index = [i for i, line in enumerate(lines) if line.startswith('names')][0]
+                coco_names = lines[names_line_index].split(' ')[-1].split('/')[-1]
+                lines[names_line_index] = ('names = ' + os.path.join(package_root_dir, constants.DATA_DIR, coco_names.strip())).replace('\\','/')    
+            
+            with open(metaPath, 'w') as metaFH:
+                metaFH.write('\n'.join(lines))
+        except:
+            pass
+
     def __init__(self, objectName, frameWidth, frameHeight, roiBox, onCapturedListener, model_name='yolov3-tiny', dataset_name='coco'):        
-        cwd = os.path.dirname(__file__)
-        CONFIG_PATH = os.path.join(cwd, constants.CONFIG_DIR, f'{model_name}.{constants.CONFIG_EXTENSION}')
-        WEIGHT_PATH = os.path.join(cwd, f'{model_name}.{constants.WEIGHTS_EXTENSION}')
-        META_PATH = os.path.join(cwd, constants.CONFIG_DIR, f'{dataset_name}.{constants.DATA_EXTENSION}')
+        PACKAGE_ROOT_DIR = os.path.dirname(__file__)
+        CONFIG_PATH = os.path.join(PACKAGE_ROOT_DIR, constants.CONFIG_DIR, f'{model_name}.{constants.CONFIG_EXTENSION}')
+        WEIGHT_PATH = os.path.join(PACKAGE_ROOT_DIR, f'{model_name}.{constants.WEIGHTS_EXTENSION}')
+        META_PATH = os.path.join(PACKAGE_ROOT_DIR, constants.CONFIG_DIR, f'{dataset_name}.{constants.DATA_EXTENSION}')
     
         # setup network
         self.netMain =  darknet.load_net_custom(CONFIG_PATH.encode("ascii"), WEIGHT_PATH.encode("ascii"), 0, 1)
-        self.metaMain =  darknet.load_meta(META_PATH.encode("ascii"))
+        self.fix_names_path(META_PATH, PACKAGE_ROOT_DIR)
+        '''
         try:
             with open(META_PATH) as metaFH:
                 metaContents = metaFH.read()
@@ -44,6 +58,8 @@ class Detector:
                     pass
         except Exception:
             pass
+        '''
+        self.metaMain =  darknet.load_meta(META_PATH.encode("ascii"))
         
         # setup input images
         self.frameWidth, self.frameHeight = frameWidth, frameHeight
