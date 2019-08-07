@@ -28,7 +28,7 @@ class Detector:
         except:
             pass
 
-    def __init__(self, objectName, frameWidth, frameHeight, roiBox, onCapturedListener, model_name='yolov3-tiny', dataset_name='coco'):        
+    def __init__(self, model_name='yolov3-tiny', dataset_name='coco'):        
         PACKAGE_ROOT_DIR = os.path.dirname(__file__)
         CONFIG_PATH = os.path.join(PACKAGE_ROOT_DIR, constants.CONFIG_DIR, f'{model_name}.{constants.CONFIG_EXTENSION}')
         WEIGHT_PATH = os.path.join(PACKAGE_ROOT_DIR, f'{model_name}.{constants.WEIGHTS_EXTENSION}')
@@ -62,19 +62,15 @@ class Detector:
         self.metaMain =  darknet.load_meta(META_PATH.encode("ascii"))
         
         # setup input images
-        self.frameWidth, self.frameHeight = frameWidth, frameHeight
         self.darknetImage = darknet.make_image(darknet.network_width(self.netMain), darknet.network_height(self.netMain), 3)
-        self.objectName = objectName
-        self.onCapturedListener = onCapturedListener
-
-    
-    def __resizeFrameAndBbox(self, frame, detections, width, heigth):
+        
+    def __resizeFrameAndBbox(self, frame, detections, width, height):
         bboxes = BoundingBoxesOnImage(
             [BoundingBox(x1=det['xmin'], y1=det['ymin'], x2=det['xmax'], y2=det['ymax']) for det in detections], 
             shape=frame.shape
         )
 
-        resizeOp = iaa.Resize({'width': width, 'height': heigth})
+        resizeOp = iaa.Resize({'width': width, 'height': height})
         resizedFrame, bboxes = resizeOp(image=frame, bounding_boxes=bboxes)
 
         return resizedFrame, [detection_mapper.createDetection(bbox.x1, bbox.y1, bbox.x2, bbox.y2, detections[i]['confidence'], detections[i]['label'])
@@ -95,6 +91,9 @@ class Detector:
         darkNetDetections = darknet.detect_image(self.netMain, self.metaMain, self.darknetImage, thresh=.25)
 
         detections = detection_mapper.convertDarknetDetections_to_Detections(darkNetDetections)
-        _, detections = self.__resizeFrameAndBbox(resizedFrame, detections, self.frameWidth, self.frameHeight)
+        _, detections = self.__resizeFrameAndBbox(resizedFrame, detections, width = originalFrame.shape[1], height=originalFrame.shape[0])
+
         return detections
+
+        
         
