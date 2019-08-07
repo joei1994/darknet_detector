@@ -1,0 +1,4 @@
+CONFIG_DIR = 'cfg'
+CONFIG_EXTENSION = 'cfg'
+WEIGHTS_EXTENSION = 'weights'
+DATA_EXTENSION = 'data'
