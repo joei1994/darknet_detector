@@ -3,7 +3,7 @@ import os
 import time
 
 from cardetection.detector import Detector
-from cardetection.captor import Captor
+from cardetection.captor import BoxCaptor, LineCaptor
 from cardetection.tracker.sort import Sort
 
 current_milli_time = lambda: int(round(time.time() * 10000))
@@ -39,15 +39,17 @@ def save_frame(frame, track, output_dir='./capture'):
     if not os.path.exists(ouptut_path):
         cv2.imwrite(ouptut_path, cropped_frame)
     
-    
-    
 def main():
     frameWidth, frameHeight = 1920, 1080  
     
     detector = Detector()
     #roi_box = create_roi_box(x=680, y=570, width=640, height=400)  
     roi_box = create_roi_box(x=680, y=520, width=560, height=310)
-    captor = Captor(Sort(), ['car', 'truck'], roi_box)
+    captor = BoxCaptor(Sort(), ['car', 'truck'], roi_box)
+
+    lines = [((2000, 550), (100, 550))]
+    roi_box = create_roi_box(x=680, y=520, width=530, height=300)
+    lineCaptor = LineCaptor(Sort(), ['car', 'truck'], lines, roi_box)
 
     #cap = cv2.VideoCapture('rtsp://admin:iapp2019@192.168.1.64/1')
     cap = cv2.VideoCapture('./1.mp4')
@@ -57,12 +59,13 @@ def main():
         _, frame = cap.read()
         
         detections = detector.detect(frame)
-        capturedDetection = captor.capture(detections)
+        capturedDetection = lineCaptor.capture(detections)
         if capturedDetection is not None:
             save_frame(frame, capturedDetection)
     
         frame = draw_bbox(frame, detections)
         cv2.rectangle(frame, (roi_box['xmin'], roi_box['ymin']), (roi_box['xmax'], roi_box['ymax']), (255, 0, 0), 1)
+        cv2.line(frame, (lines[0][0]), (lines[0][1]), (255,0,0))
         cv2.imshow('Demo', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
