@@ -50,9 +50,8 @@ def main():
     captor = Captor(Sort(), ['car', 'truck'], roi_box)
 
     #cap = cv2.VideoCapture('rtsp://admin:iapp2019@192.168.1.64/1')
-    cap = cv2.VideoCapture('C:/Users/iApp/Web/RecordFiles/2019-07-24/output.mp4')
-    cap.set(3, frameWidth)
-    cap.set(4, frameHeight)
+    cap = cv2.VideoCapture('./1.mp4')
+    cap.set(0, 90000)
 
     while True:
         _, frame = cap.read()

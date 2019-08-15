@@ -1,10 +1,10 @@
 import numpy as np
 import time
 
-current_milli_time = lambda: int(round(time.time() * 10000))
+current_milli_time = lambda: int(round(time.time() * 1000))
 
 class Captor:
-    def __init__(self, tracker, targetLabels, roiBox, detectionByRoiBoxAreaRatio = .3, iouThreshold=.6, capturePeriodMillis = 2000):
+    def __init__(self, tracker, targetLabels, roiBox, detectionByRoiBoxAreaRatio = .3, iouThreshold=.6, capturePeriodMillis = 1000):
         self.tracker = tracker
         self.targetLabels = targetLabels
         self.roiBox = roiBox
@@ -59,7 +59,6 @@ class Captor:
                ):
                 currentCapturedTime = current_milli_time()
                 timeDiff = currentCapturedTime - self.lastestCapturedTime
-                print(timeDiff)
                 if timeDiff > self.capturePeriodMillis:
                     self.capturedIds.add(objectId)
                     self.lastestCapturedTime = currentCapturedTime
