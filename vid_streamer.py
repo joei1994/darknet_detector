@@ -2,9 +2,9 @@ import cv2
 import os
 import time
 
-from cardetection.detector import Detector
-from cardetection.captor import Captor
-from cardetection.tracker.sort import Sort
+from darknet_detector.detectors.detector import Detector
+from darknet_detector.captors.captor import Captor
+from darknet_detector.trackers.sort import Sort
 
 current_milli_time = lambda: int(round(time.time() * 10000))
 
@@ -30,7 +30,7 @@ def create_roi_box(x, y, width, height):
 
     return roi_box
 
-def save_frame(frame, track, output_dir='./capture'):
+def save_frame(frame, track, output_dir='./detected_cars'):
     margin = 30
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -45,12 +45,14 @@ def main():
     frameWidth, frameHeight = 1920, 1080  
     
     detector = Detector()
-    #roi_box = create_roi_box(x=680, y=570, width=640, height=400)  
-    roi_box = create_roi_box(x=680, y=520, width=560, height=310)
+    # 1.mp4
+    #roi_box = create_roi_box(x=680, y=520, width=560, height=310)
+    # 2.mp4
+    roi_box = create_roi_box(x=600, y=380, width=560, height=320)
     captor = Captor(Sort(), ['car', 'truck'], roi_box)
 
     #cap = cv2.VideoCapture('rtsp://admin:iapp2019@192.168.1.64/1')
-    cap = cv2.VideoCapture('./1.mp4')
+    cap = cv2.VideoCapture('./2.mp4')
     cap.set(0, 90000)
 
     while True:

@@ -2,4 +2,4 @@
 *.pyc
 .vscode
 *.mp4
-/capture
+/detected_cars
