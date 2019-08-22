@@ -3,3 +3,6 @@
 .vscode
 *.mp4
 /detected_cars
+/build
+/dist
+*.egg-info
