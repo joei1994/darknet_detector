@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 setup(
     name = 'darknet_detector',
     packages = find_packages(),
-    scripts = ['darknet_detector/vid_streamer.py'],
     install_requires = [
         'scipy',
         'filterpy==1.4.1', 

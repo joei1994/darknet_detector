@@ -1,0 +1,7 @@
+classes= 80
+train  = E:/MSCOCO/trainvalno5k.txt
+#train = E:/MSCOCO/5k.txt
+valid  = E:/MSCOCO/5k.txt
+names = C:/Users/iApp/Desktop/projects/darknet_detector/darknet_detector/data/coco.names
+backup = backup
+eval=coco
